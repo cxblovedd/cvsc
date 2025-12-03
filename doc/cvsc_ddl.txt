@@ -1,0 +1,182 @@
+-- UNIONDEV.dbo.cvsc_device_model_config definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.cvsc_device_model_config;
+
+CREATE TABLE UNIONDEV.dbo.cvsc_device_model_config (
+	id int IDENTITY(1,1) NOT NULL,
+	model_name nvarchar(100) COLLATE Chinese_PRC_CI_AS NOT NULL,
+	manufacturer nvarchar(100) COLLATE Chinese_PRC_CI_AS NOT NULL,
+	CONSTRAINT PK__cvsc_dev__3213E83F7D164619 PRIMARY KEY (id),
+	CONSTRAINT UQ__cvsc_dev__5DD3F6BB57CB06F8 UNIQUE (model_name)
+);
+
+
+-- UNIONDEV.dbo.cvsc_sign_main definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.cvsc_sign_main;
+
+CREATE TABLE UNIONDEV.dbo.cvsc_sign_main (
+	id int IDENTITY(1,1) NOT NULL,
+	id_type nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	id_number nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	patient_type nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	patient_id nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	patient_name nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	sex nvarchar(5) COLLATE Chinese_PRC_CI_AS NULL,
+	age nvarchar(5) COLLATE Chinese_PRC_CI_AS NULL,
+	phone nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	hospital_id nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	endemic_area nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	device_id int NOT NULL,
+	collection_time datetime NOT NULL,
+	collection_location nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	collector nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	data_status nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	data_quality tinyint NULL,
+	remarks nvarchar(200) COLLATE Chinese_PRC_CI_AS NULL,
+	pdf_url nvarchar(500) COLLATE Chinese_PRC_CI_AS NULL,
+	create_time datetime NOT NULL,
+	bed_no nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	visit_identifier nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	CONSTRAINT PK__cvsc_sig__3213E83F8C0F899F PRIMARY KEY (id)
+);
+ CREATE NONCLUSTERED INDEX IX_cvsc_sign_main_collection_time ON UNIONDEV.dbo.cvsc_sign_main (  collection_time ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IX_cvsc_sign_main_device_id ON UNIONDEV.dbo.cvsc_sign_main (  device_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IX_cvsc_sign_main_id_number ON UNIONDEV.dbo.cvsc_sign_main (  id_number ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IX_cvsc_sign_main_patient_id ON UNIONDEV.dbo.cvsc_sign_main (  patient_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IX_cvsc_sign_main_patient_type ON UNIONDEV.dbo.cvsc_sign_main (  patient_type ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- UNIONDEV.dbo.cvsc_standard_sign_config definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.cvsc_standard_sign_config;
+
+CREATE TABLE UNIONDEV.dbo.cvsc_standard_sign_config (
+	id int IDENTITY(1,1) NOT NULL,
+	field_name nvarchar(50) COLLATE Chinese_PRC_CI_AS NOT NULL,
+	description nvarchar(200) COLLATE Chinese_PRC_CI_AS NULL,
+	unit nvarchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	data_type nvarchar(20) COLLATE Chinese_PRC_CI_AS NOT NULL,
+	normal_range_low float NULL,
+	normal_range_high float NULL,
+	warning_threshold float NULL,
+	category_code varchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	category_name nvarchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	CONSTRAINT PK__cvsc_sta__3213E83FC5F53D6C PRIMARY KEY (id),
+	CONSTRAINT UQ__cvsc_sta__7EFADAB997479A43 UNIQUE (field_name)
+);
+
+
+-- UNIONDEV.dbo.mr_monitor_bind_records definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.mr_monitor_bind_records;
+
+CREATE TABLE UNIONDEV.dbo.mr_monitor_bind_records (
+	id int IDENTITY(1,1) NOT NULL,
+	monitor_id int NULL,
+	monitor_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	monitor_code varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	frequency varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	ward_code varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	ward_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	hosp_code varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	hosp_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	bed_number varchar(10) COLLATE Chinese_PRC_CI_AS NULL,
+	pat_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	inhosp_no varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	inhosp_status varchar(10) COLLATE Chinese_PRC_CI_AS NULL,
+	device_status varchar(10) COLLATE Chinese_PRC_CI_AS NULL,
+	start_time datetime NULL,
+	start_by varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	end_time datetime NULL,
+	end_by varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	inhosp_serial_no varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	CONSTRAINT PK__mr_monit__3213E83F2034A8EA PRIMARY KEY (id)
+);
+
+
+-- UNIONDEV.dbo.mr_monitor_info definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.mr_monitor_info;
+
+CREATE TABLE UNIONDEV.dbo.mr_monitor_info (
+	id int IDENTITY(1,1) NOT NULL,
+	monitor_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	monitor_code varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	frequency varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	operator varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	operate_time datetime NULL,
+	ward_code varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	ward_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	hosp_code varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	hosp_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	monitor_status varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	update_time datetime NULL,
+	update_by varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	monitor_ip varchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	dagnq_ward_code varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	dagnq_ward_name varchar(255) COLLATE Chinese_PRC_CI_AS NULL,
+	remark varchar(500) COLLATE Chinese_PRC_CI_AS NULL,
+	mac varchar(50) COLLATE Chinese_PRC_CI_AS NULL,
+	modelID int NULL,
+	use_status varchar(20) COLLATE Chinese_PRC_CI_AS NULL,
+	CONSTRAINT PK__mr_monit__3213E83F07F2AB4B PRIMARY KEY (id)
+);
+
+
+-- UNIONDEV.dbo.cvsc_device_field_rel definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.cvsc_device_field_rel;
+
+CREATE TABLE UNIONDEV.dbo.cvsc_device_field_rel (
+	id int IDENTITY(1,1) NOT NULL,
+	model_id int NOT NULL,
+	standard_field_id int NOT NULL,
+	device_field_name nvarchar(50) COLLATE Chinese_PRC_CI_AS NOT NULL,
+	conversion_formula nvarchar(200) COLLATE Chinese_PRC_CI_AS NULL,
+	CONSTRAINT PK__cvsc_dev__3213E83F556AD30D PRIMARY KEY (id),
+	CONSTRAINT UQ_cvsc_device_field_rel UNIQUE (model_id,standard_field_id),
+	CONSTRAINT FK__cvsc_devi__model__63FD8E10 FOREIGN KEY (model_id) REFERENCES UNIONDEV.dbo.cvsc_device_model_config(id),
+	CONSTRAINT FK__cvsc_devi__stand__64F1B249 FOREIGN KEY (standard_field_id) REFERENCES UNIONDEV.dbo.cvsc_standard_sign_config(id)
+);
+
+
+-- UNIONDEV.dbo.cvsc_sign_detail definition
+
+-- Drop table
+
+-- DROP TABLE UNIONDEV.dbo.cvsc_sign_detail;
+
+CREATE TABLE UNIONDEV.dbo.cvsc_sign_detail (
+	id int IDENTITY(1,1) NOT NULL,
+	vital_sign_data_id int NOT NULL,
+	standard_field_id int NOT NULL,
+	standard_field_value nvarchar(MAX) COLLATE Chinese_PRC_CI_AS NULL,
+	original_device_value nvarchar(MAX) COLLATE Chinese_PRC_CI_AS NULL,
+	detail_collection_time datetime NULL,
+	CONSTRAINT PK__cvsc_sig__3213E83F436D0E57 PRIMARY KEY (id),
+	CONSTRAINT FK__cvsc_sign__stand__6AAA8B9F FOREIGN KEY (standard_field_id) REFERENCES UNIONDEV.dbo.cvsc_standard_sign_config(id),
+	CONSTRAINT FK__cvsc_sign__vital__69B66766 FOREIGN KEY (vital_sign_data_id) REFERENCES UNIONDEV.dbo.cvsc_sign_main(id)
+);

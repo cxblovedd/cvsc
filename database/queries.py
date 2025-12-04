@@ -121,7 +121,7 @@ def query_vital_signs_paginated(patient_id, start_time, end_time):
 def get_patient_basic_info(patient_id):
     """获取患者基本信息"""
     return run_query(
-        "SELECT TOP 1 patient_name, age, sex, hospital_id, bed_no, collection_location FROM cvsc_sign_main WHERE patient_id = :pid ORDER BY collection_time DESC",
+        "SELECT TOP 1 patient_id, patient_name, age, sex, hospital_id, bed_no, collection_location FROM cvsc_sign_main WHERE patient_id = :pid ORDER BY collection_time DESC",
         {"pid": patient_id}
     )
 
@@ -170,3 +170,179 @@ def get_system_logs():
         SELECT TOP 50 collection_time, patient_id, device_id, data_status 
         FROM cvsc_sign_main ORDER BY collection_time DESC
     """)
+
+def get_device_stats():
+    """获取设备统计数据"""
+    try:
+        total_devices = run_query("SELECT COUNT(*) as c FROM mr_monitor_info")
+        online_devices = run_query("SELECT COUNT(*) as c FROM mr_monitor_info WHERE monitor_status = '在线'")
+        in_use_devices = run_query("SELECT COUNT(*) as c FROM mr_monitor_info WHERE use_status = '使用中'")
+        
+        return {
+            'total_devices': total_devices['c'].values[0] if not total_devices.empty else 0,
+            'online_devices': online_devices['c'].values[0] if not online_devices.empty else 0,
+            'in_use_devices': in_use_devices['c'].values[0] if not in_use_devices.empty else 0,
+            'online_rate': (online_devices['c'].values[0] / total_devices['c'].values[0] * 100) if not total_devices.empty and total_devices['c'].values[0] > 0 else 0,
+            'usage_rate': (in_use_devices['c'].values[0] / total_devices['c'].values[0] * 100) if not total_devices.empty and total_devices['c'].values[0] > 0 else 0,
+            'maintenance_needed': run_query("SELECT COUNT(*) as c FROM mr_monitor_info WHERE use_status = '维护中'")['c'].values[0] if not run_query("SELECT COUNT(*) as c FROM mr_monitor_info WHERE use_status = '维护中'").empty else 0,
+            'new_devices_this_month': 30,  # 模拟数据
+            'resolved_today': 5  # 模拟数据
+        }
+    except:
+        return {
+            'total_devices': 0, 'online_devices': 0, 'in_use_devices': 0,
+            'online_rate': 0, 'usage_rate': 0, 'maintenance_needed': 0,
+            'new_devices_this_month': 0, 'resolved_today': 0
+        }
+
+def get_mapping_stats():
+    """获取映射统计数据"""
+    try:
+        total_mappings = run_query("SELECT COUNT(*) as c FROM cvsc_device_field_rel")
+        device_models = run_query("SELECT COUNT(DISTINCT model_id) as c FROM cvsc_device_field_rel")
+        standard_fields = run_query("SELECT COUNT(*) as c FROM cvsc_standard_sign_config")
+        mapped_fields = run_query("SELECT COUNT(DISTINCT standard_field_id) as c FROM cvsc_device_field_rel")
+        
+        return {
+            'total_mappings': total_mappings['c'].values[0] if not total_mappings.empty else 0,
+            'device_models': device_models['c'].values[0] if not device_models.empty else 0,
+            'standard_fields': standard_fields['c'].values[0] if not standard_fields.empty else 0,
+            'mapped_fields': mapped_fields['c'].values[0] if not mapped_fields.empty else 0,
+            'new_mappings_today': 3,  # 模拟数据
+            'active_models': device_models['c'].values[0] if not device_models.empty else 0,
+            'pending_validation': 5,  # 模拟数据
+            'validated_today': 8  # 模拟数据
+        }
+    except:
+        return {
+            'total_mappings': 0, 'device_models': 0, 'standard_fields': 0,
+            'mapped_fields': 0, 'new_mappings_today': 0, 'active_models': 0,
+            'pending_validation': 0, 'validated_today': 0
+        }
+
+def delete_field_mapping(mapping_id):
+    """删除字段映射"""
+    return run_update("DELETE FROM cvsc_device_field_rel WHERE id = :id", {'id': mapping_id})
+
+def update_field_mapping(mapping_id, **kwargs):
+    """更新字段映射"""
+    set_clauses = []
+    params = {'id': mapping_id}
+    
+    for key, value in kwargs.items():
+        if value is not None:
+            set_clauses.append(f"{key} = :{key}")
+            params[key] = value
+    
+    if set_clauses:
+        sql = f"UPDATE cvsc_device_field_rel SET {', '.join(set_clauses)} WHERE id = :id"
+        return run_update(sql, params)
+    return False
+
+def get_error_logs():
+    """获取错误日志"""
+    # 模拟数据，实际应该从日志表查询
+    import pandas as pd
+    from datetime import datetime, timedelta
+    
+    data = []
+    for i in range(10):
+        data.append({
+            'timestamp': datetime.now() - timedelta(hours=i),
+            'error_type': ['数据库连接', '网络超时', '数据格式', '权限验证'][i % 4],
+            'severity': ['低', '中', '高', '紧急'][i % 4],
+            'message': f'模拟错误消息 {i+1}',
+            'status': ['待处理', '处理中', '已解决'][i % 3],
+            'assigned_to': [None, '张工', '李工'][i % 3]
+        })
+    
+    return pd.DataFrame(data)
+
+def get_performance_metrics():
+    """获取性能指标"""
+    return {
+        'avg_response_time': 25.5,
+        'success_rate': 98.7,
+        'concurrent_users': 45
+    }
+
+def get_system_stats():
+    """获取系统统计数据"""
+    try:
+        today_count = run_query("SELECT COUNT(*) as c FROM cvsc_sign_main WHERE CAST(collection_time AS DATE) = CAST(GETDATE() AS DATE)")
+        device_count = run_query("SELECT COUNT(*) as c FROM mr_monitor_info WHERE monitor_status = '在线'")
+        
+        return {
+            'db_status': '正常',
+            'db_pool_size': 8,
+            'db_pool_max': 20,
+            'collection_delay': 12,
+            'delay_change': -3,
+            'error_count': 5,
+            'resolved_errors': 8,
+            'data_throughput': 45,
+            'throughput_change': 12.5
+        }
+    except:
+        return {
+            'db_status': '异常',
+            'db_pool_size': 0,
+            'db_pool_max': 20,
+            'collection_delay': 0,
+            'delay_change': 0,
+            'error_count': 0,
+            'resolved_errors': 0,
+            'data_throughput': 0,
+            'throughput_change': 0
+        }
+
+def get_active_alerts():
+    """获取活跃告警"""
+    # 模拟告警数据
+    import pandas as pd
+    from datetime import datetime, timedelta
+    
+    alerts_data = []
+    patient_names = ['张三', '李四', '王五', '赵六', '钱七']
+    bed_numbers = ['ICU-01', 'ICU-02', '内科-15', '外科-08', '急诊-02']
+    messages = [
+        '心率异常：过高 (>120)',
+        '血氧饱和度偏低：(<92%)',
+        '体温异常：发热 (>38.5°C)',
+        '血压异常：收缩压过高 (>160)',
+        '呼吸频率异常：过快 (>25)'
+    ]
+    severities = ['危急', '警告', '提示']
+    
+    for i in range(8):  # 生成8条告警
+        alerts_data.append({
+            'id': i + 1,
+            'patient_id': f'P{1000 + i}',
+            'patient_name': patient_names[i % len(patient_names)],
+            'bed_no': bed_numbers[i % len(bed_numbers)],
+            'message': messages[i % len(messages)],
+            'severity': severities[i % len(severities)],
+            'timestamp': datetime.now() - timedelta(minutes=i*15)
+        })
+    
+    return pd.DataFrame(alerts_data)
+
+def get_device_monitoring_stats():
+    """获取设备监控统计"""
+    # 模拟设备状态数据
+    import pandas as pd
+    
+    data = {
+        'status': ['在线', '离线', '维护'],
+        'count': [42, 5, 3]
+    }
+    return pd.DataFrame(data)
+
+def get_device_performance_metrics():
+    """获取设备性能指标"""
+    return {
+        'avg_response_time': 25,
+        'success_rate': 98.5,
+        'failure_rate': 1.5,
+        'scheduled_maintenance': 2
+    }

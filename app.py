@@ -4,7 +4,7 @@ from database.connection import test_connection
 from auth.login import check_authentication
 from components.common import render_sidebar, render_navigation_menu, render_sidebar_stats
 from modules.dashboard_page import render_dashboard
-from modules.patient_analysis_page import render_patient_analysis
+from modules.patient_search_page import render_patient_search
 from modules.device_management_page import render_device_management
 from modules.field_mapping_page import render_field_mapping
 from modules.system_logs_page import render_system_logs
@@ -47,8 +47,8 @@ def main():
     # 根据选择渲染对应页面
     if menu == "📊 实时监控看板":
         render_dashboard()
-    elif menu == "📈 患者数据分析":
-        render_patient_analysis()
+    elif menu == "🔍 患者检索分析":
+        render_patient_search()
     elif menu == "⚙️ 设备管理":
         render_device_management()
     elif menu == "🔌 字段映射":

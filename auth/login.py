@@ -5,6 +5,26 @@ def check_login(username, password):
     """验证用户登录"""
     return username in config.VALID_USERS and config.VALID_USERS[username] == password
 
+def get_user_role(username):
+    """获取用户角色"""
+    user_roles = {
+        "admin": "admin",
+        "doctor": "medical_staff", 
+        "nurse": "medical_staff",
+        "technician": "technical_staff"
+    }
+    return user_roles.get(username, "guest")
+
+def get_user_permissions(role):
+    """获取用户权限"""
+    permissions = {
+        "admin": ["dashboard", "search", "device_management", "field_mapping", "system_logs"],
+        "medical_staff": ["dashboard", "search"],
+        "technical_staff": ["device_management", "field_mapping", "system_logs"],
+        "guest": []
+    }
+    return permissions.get(role, [])
+
 def render_login_page():
     """渲染登录页面"""
     
@@ -28,6 +48,12 @@ def render_login_page():
                 if check_login(username, password):
                     st.session_state.logged_in = True
                     st.session_state.username = username
+                    
+                    # 立即设置用户角色和权限
+                    role = get_user_role(username)
+                    st.session_state.user_role = role
+                    st.session_state.user_permissions = get_user_permissions(role)
+                    
                     st.success(f"欢迎回来，{username}！")
                     st.rerun()
                 else:
@@ -40,13 +66,31 @@ def check_authentication():
     if 'logged_in' not in st.session_state or not st.session_state.logged_in:
         render_login_page()
         return False
+    
+    # 确保用户角色和权限已设置
+    username = st.session_state.get('username')
+    if username and 'user_role' not in st.session_state:
+        role = get_user_role(username)
+        st.session_state.user_role = role
+        st.session_state.user_permissions = get_user_permissions(role)
+        
+        # 调试信息
+        print(f"用户 {username} 角色: {role}, 权限: {st.session_state.user_permissions}")
+    
     return True
+
+def has_permission(permission):
+    """检查用户是否有特定权限"""
+    return permission in st.session_state.get('user_permissions', [])
 
 def logout():
     """用户登出"""
-    st.session_state.logged_in = False
-    st.session_state.username = None
-    if 'current_view' in st.session_state:
-        del st.session_state.current_view
-    if 'selected_patient_id' in st.session_state:
-        del st.session_state.selected_patient_id
+    # 清理所有session状态
+    keys_to_clear = [
+        'logged_in', 'username', 'user_role', 'user_permissions',
+        'current_view', 'selected_patient_id', 'search_step', 'search_filters'
+    ]
+    
+    for key in keys_to_clear:
+        if key in st.session_state:
+            del st.session_state[key]
